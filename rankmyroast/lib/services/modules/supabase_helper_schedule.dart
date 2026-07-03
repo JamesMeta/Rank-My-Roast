@@ -7,7 +7,11 @@ class SupabaseHelperSchedule {
 
   Future<List<Schedule>?> getAllScheduledEventsForUser() async {
     try {
-      final response = await _client.from("schedule").select("*");
+      final response = await _client
+          .from("schedule")
+          .select(
+            "*, recipe (id, created_at, name, ingredients, instructions, groceries, prep_time, cook_time, is_public, image_name)",
+          );
 
       return response.map((toElement) => Schedule.fromMap(toElement)).toList();
     } on Exception catch (e) {
