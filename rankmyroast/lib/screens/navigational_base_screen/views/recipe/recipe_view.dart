@@ -6,7 +6,7 @@ import 'package:rankmyroast/classes/extra/view_recipe_extra.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/group_order.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/widgets/recipe_tile_widget.dart';
+import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/widgets/recipe_tile_widget.dart';
 import 'package:rankmyroast/services/sqlite_helper.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 

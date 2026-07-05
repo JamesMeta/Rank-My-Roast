@@ -23,19 +23,20 @@ class EventDataSource extends CalendarDataSource {
 
   @override
   String getSubject(int index) {
-    return appointments![index].recipe.name;
+    return appointments![index].recipe.name +
+        '\t\t[${appointments![index].group.name}]';
   }
 
   @override
   Color getColor(int index) {
     final List<Color> colors = [
-      Colors.red,
-      Colors.orange,
-      Colors.yellow,
       Colors.green,
-      Colors.blue,
-      Colors.indigo,
-      Colors.purple,
+      const Color.fromARGB(255, 46, 125, 50),
+      const Color.fromARGB(255, 27, 70, 29),
+      const Color.fromARGB(255, 181, 80, 0),
+      const Color.fromARGB(255, 13, 89, 94),
+      const Color.fromARGB(255, 30, 30, 30),
+      const Color.fromARGB(255, 55, 71, 79),
     ];
     return colors[index % colors.length];
   }

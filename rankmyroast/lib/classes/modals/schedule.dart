@@ -1,20 +1,21 @@
+import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 
 class Schedule {
-  int? id;
-  String createdAt;
-  String servedAt;
-  String groupId;
-  String userId;
+  final int? id;
+  final String createdAt;
+  final String servedAt;
+  final String userId;
 
-  Recipe recipe;
+  final Recipe recipe;
+  final Group group;
 
   Schedule({
     this.id,
     required this.createdAt,
     required this.servedAt,
     required this.recipe,
-    required this.groupId,
+    required this.group,
     required this.userId,
   });
 
@@ -24,7 +25,7 @@ class Schedule {
       createdAt: map['created_at'] ?? '',
       servedAt: map['served_at'] ?? '',
       recipe: Recipe.fromMap(map['recipe']),
-      groupId: map['group_id'] ?? '',
+      group: Group.fromMap(map['group']),
       userId: map['user_id'] ?? '',
     );
   }

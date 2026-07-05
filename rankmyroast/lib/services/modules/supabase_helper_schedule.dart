@@ -10,7 +10,7 @@ class SupabaseHelperSchedule {
       final response = await _client
           .from("schedule")
           .select(
-            "*, recipe (id, created_at, name, ingredients, instructions, groceries, prep_time, cook_time, is_public, image_name)",
+            "*, recipe (id, created_at, name, ingredients, instructions, groceries, prep_time, cook_time, is_public, image_name), group (id, created_at, name, user_id, grade_visible, use_rating, is_personal_group)",
           );
 
       return response.map((toElement) => Schedule.fromMap(toElement)).toList();

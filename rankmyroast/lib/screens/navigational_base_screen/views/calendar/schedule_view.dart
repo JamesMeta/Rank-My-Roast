@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/classes/event_data_source.dart';
+import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/widgets/view_event_dialog_widget.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -45,6 +46,28 @@ class _ScheduleViewState extends State<ScheduleView> {
                   final events = snapshot.data!;
                   return SfCalendar(
                     view: _selectedView,
+                    onTap: (calendarTapDetails) {
+                      if (calendarTapDetails.targetElement.name !=
+                          "appointment") {
+                        return;
+                      }
+
+                      final Schedule event =
+                          calendarTapDetails.appointments?.first;
+
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => ViewEventDialogWidget(event: event),
+                      );
+                    },
+                    headerHeight: 0, // Remove Header
+                    scheduleViewSettings: ScheduleViewSettings(
+                      monthHeaderSettings: MonthHeaderSettings(
+                        backgroundColor: Colors.green,
+                        height: 80.h,
+                      ),
+                    ),
                     dataSource: EventDataSource(events),
                   );
                 }
