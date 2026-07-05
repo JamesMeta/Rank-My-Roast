@@ -6,7 +6,7 @@ import 'package:rankmyroast/classes/extra/view_recipe_extra.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/group_order.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/widgets/recipe_tile_widget.dart';
+import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/widgets/recipe_tile_widget.dart';
 import 'package:rankmyroast/services/sqlite_helper.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 
@@ -42,7 +42,7 @@ class _RecipeViewState extends State<RecipeView> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Column(
         children: [
           FutureBuilder(
@@ -147,7 +147,7 @@ class _RecipeViewState extends State<RecipeView> {
             },
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: 8.h),
 
           TextField(
             controller: _searchController,
@@ -166,7 +166,7 @@ class _RecipeViewState extends State<RecipeView> {
             ),
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: 8.h),
 
           FutureBuilder(
             future: _groupsList,

@@ -16,6 +16,7 @@ import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screen
 import 'package:rankmyroast/screens/settings/settings_screen.dart';
 import 'package:rankmyroast/services/sqlite_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 const supabaseUrl = "https://ozmzpnayygajicxafxfm.supabase.co";
 const supabaseKey = "sb_publishable_zTr-mF2b6CCWgssJZEgMjQ_vUwB62oJ";
@@ -24,7 +25,7 @@ const sqliteTableVersion = 1.0;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  tz.initializeTimeZones();
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseKey,

@@ -23,6 +23,8 @@ dependencies:
   image_cropper: ^12.2.0
   cupertino_icons: any
   sqflite: any
+  syncfusion_flutter_calendar: ^31.1.19
+  timezone: ^0.10.1
 
 
 dev_dependencies:
@@ -37,6 +39,7 @@ flutter:
     - assets/images/rankmyroast_icon2.png
     - assets/images/rankmyroast_icon3.png
     - assets/images/rankmyroast_icon4.png
+    - packages/timezone/data/latest_all.tzf
   
   fonts:
     - family: opensans
