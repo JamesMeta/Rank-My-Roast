@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/classes/event_data_source.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/widgets/view_event_dialog_widget.dart';
@@ -46,9 +47,13 @@ class _ScheduleViewState extends State<ScheduleView> {
                   final events = snapshot.data!;
                   return SfCalendar(
                     view: _selectedView,
-                    onTap: (calendarTapDetails) {
+                    onTap: (calendarTapDetails) async {
                       if (calendarTapDetails.targetElement.name !=
                           "appointment") {
+                        final response = await context.push(
+                          "/base/create-event",
+                        );
+
                         return;
                       }
 
