@@ -53,26 +53,28 @@ class _SelectRecipeScreenState extends State<SelectRecipeScreen> {
 
           if (crossAxisCount < 2) crossAxisCount = 2;
 
-          return GridView.builder(
-            shrinkWrap: true,
+          return _recipes.isNotEmpty
+              ? GridView.builder(
+                shrinkWrap: true,
 
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              childAspectRatio: 4 / 5,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-            ),
-            itemCount: _recipes.length,
-            itemBuilder: (context, index) {
-              final recipe = _recipes[index];
-              return GestureDetector(
-                onTap: () async {
-                  Navigator.pop(context, recipe);
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  childAspectRatio: 4 / 5,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                ),
+                itemCount: _recipes.length,
+                itemBuilder: (context, index) {
+                  final recipe = _recipes[index];
+                  return GestureDetector(
+                    onTap: () async {
+                      Navigator.pop(context, recipe);
+                    },
+                    child: SelectRecipeTileWidget(recipe: recipe),
+                  );
                 },
-                child: SelectRecipeTileWidget(recipe: recipe),
-              );
-            },
-          );
+              )
+              : const Center(child: Text('No recipes available.'));
         },
       ),
     );

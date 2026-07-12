@@ -54,17 +54,29 @@ class _ScheduleViewState extends State<ScheduleView> {
                           "/base/create-event",
                         );
 
+                        if (response != null && response is bool && response) {
+                          setState(() {
+                            _scheduledEvents = _getEvents();
+                          });
+                        }
+
                         return;
                       }
 
                       final Schedule event =
                           calendarTapDetails.appointments?.first;
 
-                      showDialog(
+                      final response = await showDialog(
                         context: context,
                         builder:
                             (context) => ViewEventDialogWidget(event: event),
                       );
+
+                      if (response != null && response is bool && response) {
+                        setState(() {
+                          _scheduledEvents = _getEvents();
+                        });
+                      }
                     },
                     headerHeight: 0, // Remove Header
                     scheduleViewSettings: ScheduleViewSettings(

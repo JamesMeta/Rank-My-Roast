@@ -23,20 +23,27 @@ class SupabaseHelperSchedule {
   Future<bool?> createScheduledEvent(
     String groupId,
     String recipeId,
+    String notes,
     DateTime servedAt,
   ) async {
     try {
       final userId = SupabaseHelper.users.getAuthId();
 
-      final response = await _client.from("schedule").insert({
-        "group_id": groupId,
-        "recipe_id": recipeId,
-        "served_at": servedAt.toIso8601String(),
-        "user_id": userId,
-      });
+      final response =
+          await _client
+              .from("schedule")
+              .insert({
+                "group_id": groupId,
+                "recipe_id": recipeId,
+                "served_at": servedAt.toIso8601String(),
+                "notes": notes,
+                "user_id": userId,
+              })
+              .select("id")
+              .single();
 
-      if (response.error != null) {
-        print("Error creating scheduled event: ${response.error!.message}");
+      if (response["id"] == null) {
+        print("Error creating scheduled event");
         return false;
       }
 
@@ -54,11 +61,6 @@ class SupabaseHelperSchedule {
           .delete()
           .eq("id", scheduleId);
 
-      if (response.error != null) {
-        print("Error deleting scheduled event: ${response.error!.message}");
-        return false;
-      }
-
       return true;
     } on Exception catch (e) {
       print("Error unable to delete scheduled event: $e");
@@ -71,24 +73,31 @@ class SupabaseHelperSchedule {
     DateTime newServedAt,
     String newRecipeId,
     String newGroupId,
+    String newNotes,
   ) async {
     try {
-      final response = await _client
-          .from("schedule")
-          .update({
-            "served_at": newServedAt.toIso8601String(),
-            "recipe_id": newRecipeId,
-            "group_id": newGroupId,
-          })
-          .eq("id", scheduleId);
+      final response =
+          await _client
+              .from("schedule")
+              .update({
+                "served_at": newServedAt.toIso8601String(),
+                "recipe_id": newRecipeId,
+                "group_id": newGroupId,
+                "notes": newNotes,
+              })
+              .eq("id", scheduleId)
+              .select(); // <--- Forces Supabase to return the modified row(s)
 
-      if (response.error != null) {
-        print("Error updating scheduled event: ${response.error!.message}");
+      // If the list is empty, no row matched the ID or RLS denied it
+      if (response == null || (response as List).isEmpty) {
+        print(
+          "Update executed but 0 rows were altered. Check your ID or RLS policies.",
+        );
         return false;
       }
 
       return true;
-    } on Exception catch (e) {
+    } catch (e) {
       print("Error unable to update scheduled event: $e");
       return null;
     }
