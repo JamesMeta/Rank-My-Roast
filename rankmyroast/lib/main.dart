@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/extra/create_event_extra.dart';
 import 'package:rankmyroast/classes/extra/create_recipe_extra.dart';
 import 'package:rankmyroast/classes/extra/rank_recipe_extra.dart';
+import 'package:rankmyroast/classes/extra/select_recipe_extra.dart';
 import 'package:rankmyroast/classes/extra/view_recipe_extra.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/screens/login/confirm_email_screen.dart';
 import 'package:rankmyroast/screens/login/create_account_screen.dart';
 import 'package:rankmyroast/screens/login/login_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/navigational_base_screen.dart';
+import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/screens/create/create_event_screen.dart';
+import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/screens/create/screens/select_recipe_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/groups/screens/create_group_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/create/create_recipe_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/rank/rank_recipe_screen.dart';
@@ -75,6 +79,30 @@ final GoRouter _router = GoRouter(
 
             return const CreateRecipeScreen(groups: []);
           },
+        ),
+        GoRoute(
+          path: '/create-event',
+          builder: (context, state) {
+            final extra = state.extra;
+            if (extra != null && extra is CreateEventExtra) {
+              return CreateEventScreen(extra: extra);
+            }
+
+            return const CreateEventScreen(extra: null);
+          },
+          routes: [
+            GoRoute(
+              path: '/select-recipe',
+              builder: (context, state) {
+                final extra = state.extra;
+                if (extra != null && extra is SelectRecipeExtra) {
+                  return SelectRecipeScreen(extra: extra);
+                }
+
+                return const SelectRecipeScreen(extra: null);
+              },
+            ),
+          ],
         ),
         GoRoute(
           path: '/view-recipe',

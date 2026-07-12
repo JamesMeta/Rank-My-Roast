@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/extra/create_event_extra.dart';
+import 'package:rankmyroast/classes/extra/select_recipe_extra.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
@@ -76,6 +78,8 @@ class ViewEventDialogWidget extends StatelessWidget {
     final Color primaryGreen = Colors.green;
     final imageUrl = event.recipe.publicImageUrl;
     final servedAtText = _formatServedAt(event.servedAt);
+    final bool isOwner =
+        event.userId == Supabase.instance.client.auth.currentUser?.id;
 
     return AlertDialog(
       backgroundColor: Colors.white,
@@ -167,11 +171,39 @@ class ViewEventDialogWidget extends StatelessWidget {
               event.group.name,
               Colors.green[700]!,
             ),
+            const SizedBox(height: 16),
+            _buildInfoTile(
+              Icons.note,
+              'Notes',
+              event.notes != null && event.notes!.isNotEmpty
+                  ? event.notes!
+                  : 'No notes provided.',
+              Colors.green[700]!,
+            ),
           ],
         ),
       ),
       actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       actions: [
+        if (isOwner)
+          TextButton(
+            onPressed: () async {
+              final response = await context.push(
+                "/base/create-event",
+                extra: CreateEventExtra(event: event),
+              );
+
+              if (response != null && response is bool && response) {
+                context.pop(true);
+              } else {
+                context.pop();
+              }
+            },
+
+            style: TextButton.styleFrom(foregroundColor: Colors.green[800]),
+            child: const Text('Edit'),
+          ),
+
         TextButton(
           onPressed: () => context.pop(),
           style: TextButton.styleFrom(foregroundColor: Colors.green[800]),

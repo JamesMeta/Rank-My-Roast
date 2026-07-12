@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class RecipeTileWidget extends StatelessWidget {
-  RecipeTileWidget({super.key, required this.recipe});
+class SelectRecipeTileWidget extends StatelessWidget {
+  SelectRecipeTileWidget({super.key, required this.recipe});
 
   final Recipe recipe;
 

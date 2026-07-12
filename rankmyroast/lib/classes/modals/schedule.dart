@@ -6,6 +6,7 @@ class Schedule {
   final String createdAt;
   final String servedAt;
   final String userId;
+  final String? notes;
 
   final Recipe recipe;
   final Group group;
@@ -17,6 +18,7 @@ class Schedule {
     required this.recipe,
     required this.group,
     required this.userId,
+    this.notes,
   });
 
   factory Schedule.fromMap(Map<String, dynamic> map) {
@@ -27,6 +29,7 @@ class Schedule {
       recipe: Recipe.fromMap(map['recipe']),
       group: Group.fromMap(map['group']),
       userId: map['user_id'] ?? '',
+      notes: map['notes'],
     );
   }
 }
