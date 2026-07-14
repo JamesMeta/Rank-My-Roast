@@ -460,4 +460,34 @@ class SupabaseHelperRecipe {
       return null;
     }
   }
+
+  Future<List<RecipeRating>?> getRatingsByUser() async {
+    try {
+      final userId = SupabaseHelper.users.getAuthId();
+      final response = await _client
+          .from("recipe_rating")
+          .select("*")
+          .eq("user_id", userId!);
+
+      return response.map((r) => RecipeRating.fromMap(r)).toList();
+    } catch (e) {
+      print('Error fetching recipe ratings: $e');
+      return null;
+    }
+  }
+
+  // Supabase RLS Polcies prevent users from accessing recipes that aren't in their groups
+  // so doing a select all on the recipes table will not return any recipes that the user doesn't have access to,
+  // we can just do a select all and return the results
+  // JM1 14/JUL/2026
+  Future<List<Recipe>?> getAccessibleRecipesForUser() async {
+    try {
+      final response = await _client.from("recipe").select("*");
+
+      return response.map((r) => Recipe.fromMap(r)).toList();
+    } catch (e) {
+      print('Error fetching accessible recipes for user: $e');
+      return null;
+    }
+  }
 }
