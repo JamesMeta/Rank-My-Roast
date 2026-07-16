@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/modals/recipe_rating.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -27,7 +30,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -59,16 +62,8 @@ class _HomeViewState extends State<HomeView> {
                 return const Text('No scheduled events found.');
               } else {
                 final schedules = snapshot.data!;
-                return Column(
-                  children: [
-                    const Text(
-                      'Scheduled Events:',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                return _buildScheduledEventDisplay(
+                  getNextScheduledEvent(schedules),
                 );
               }
             },
@@ -111,6 +106,101 @@ class _HomeViewState extends State<HomeView> {
       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
     );
   }
+
+  Widget _buildScheduledEventDisplay(Schedule? schedule) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    if (schedule != null) {
+      final recipe = schedule.recipe;
+      final servedAt = schedule.servedAt.substring(0, 10);
+      final imageUrl = schedule.recipe.publicImageUrl;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Coming Up Next:", style: TextStyle(fontSize: 24.sp)),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(width: 2, color: Colors.grey[700]!),
+            ),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child:
+                      imageUrl == null
+                          ? SizedBox(
+                            height: 220.h,
+                            child: Image.asset(
+                              'assets/images/rankmyroast_icon4.png',
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                          : CachedNetworkImage(
+                            httpHeaders: {
+                              'Authorization':
+                                  'Bearer ${Supabase.instance.client.auth.currentSession?.accessToken}',
+                            },
+                            imageUrl: imageUrl,
+                            fit: BoxFit.cover,
+                            height: 220.h,
+                            width: screenWidth,
+                            placeholder:
+                                (context, url) => const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                            errorWidget:
+                                (context, url, error) => Container(
+                                  height: 220.h,
+                                  color: Colors.grey[200],
+                                  child: const Icon(
+                                    Icons.broken_image,
+                                    size: 56,
+                                  ),
+                                ),
+                          ),
+                ),
+                Positioned(
+                  bottom: 40,
+                  child: Container(
+                    width: screenWidth - 64,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(199, 27, 78, 28),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          recipe.name,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          servedAt,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Text("ddaw");
+    }
+  }
+
+  //Widget _buildRecipeRatingDisplay(RecipeRating? recipeRating) {}
 
   Schedule? getNextScheduledEvent(List<Schedule> schedules) {
     if (schedules.isEmpty) return null;
