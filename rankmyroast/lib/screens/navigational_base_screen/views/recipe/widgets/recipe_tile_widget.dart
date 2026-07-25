@@ -56,7 +56,7 @@ class RecipeTileWidget extends StatelessWidget {
                         )
                         : Image.asset(
                           "assets/images/rankmyroast_icon4.png",
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                         ),
               ),
             ),
