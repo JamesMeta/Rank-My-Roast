@@ -31,70 +31,72 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FutureBuilder<String?>(
-            future: _usernameFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return _buildWelcomeDisplay("User");
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (!snapshot.hasData || snapshot.data == null) {
-                return _buildWelcomeDisplay("User");
-              } else {
-                final username = snapshot.data!;
-                return _buildWelcomeDisplay(username);
-              }
-            },
-          ),
-          const SizedBox(height: 20),
-          FutureBuilder<List<Schedule>?>(
-            future: _schedulesFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Text('No scheduled events found.');
-              } else {
-                final schedules = snapshot.data!;
-                return _buildScheduledEventDisplay(
-                  getNextScheduledEvent(schedules),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FutureBuilder<String?>(
+              future: _usernameFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return _buildWelcomeDisplay("User");
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return _buildWelcomeDisplay("User");
+                } else {
+                  final username = snapshot.data!;
+                  return _buildWelcomeDisplay(username);
+                }
+              },
+            ),
+            const SizedBox(height: 20),
+            FutureBuilder<List<Schedule>?>(
+              future: _schedulesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Text('No scheduled events found.');
+                } else {
+                  final schedules = snapshot.data!;
+                  return _buildScheduledEventDisplay(
+                    getNextScheduledEvent(schedules),
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 20),
+            FutureBuilder<Recipe?>(
+              future: Future.wait([
+                _schedulesFuture,
+                _recipeRatingsFuture,
+              ]).then((results) async {
+                final recipeRatings = results.last as List<RecipeRating>;
+                final schedules = results.first as List<Schedule>;
+
+                return await getUnratedRecipeInPastEvents(
+                  schedules,
+                  recipeRatings,
                 );
-              }
-            },
-          ),
-          const SizedBox(height: 20),
-          FutureBuilder<List<RecipeRating>?>(
-            future: _recipeRatingsFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Text('No recipe ratings found.');
-              } else {
-                final recipeRatings = snapshot.data!;
-                return Column(
-                  children: [
-                    const Text(
-                      'Recipe Ratings:',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                );
-              }
-            },
-          ),
-        ],
+              }),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final recipe = snapshot.data;
+
+                  return _buildRecipeRatingDisplay(recipe);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -118,7 +120,7 @@ class _HomeViewState extends State<HomeView> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Coming Up Next:", style: TextStyle(fontSize: 24.sp)),
+          Text("Coming up next:", style: TextStyle(fontSize: 24.sp)),
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
@@ -166,7 +168,7 @@ class _HomeViewState extends State<HomeView> {
                   child: Container(
                     width: screenWidth - 64,
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(199, 27, 78, 28),
+                      color: const Color.fromARGB(198, 68, 68, 68),
                     ),
                     child: Column(
                       children: [
@@ -200,7 +202,89 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  //Widget _buildRecipeRatingDisplay(RecipeRating? recipeRating) {}
+  Widget _buildRecipeRatingDisplay(Recipe? recipe) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    if (recipe != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Submit a ranking for a previous meal",
+            style: TextStyle(fontSize: 24.sp),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(width: 2, color: Colors.grey[700]!),
+            ),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child:
+                      recipe.publicImageUrl == null
+                          ? SizedBox(
+                            height: 220.h,
+                            child: Image.asset(
+                              'assets/images/rankmyroast_icon4.png',
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                          : CachedNetworkImage(
+                            httpHeaders: {
+                              'Authorization':
+                                  'Bearer ${Supabase.instance.client.auth.currentSession?.accessToken}',
+                            },
+                            imageUrl: recipe.publicImageUrl!,
+                            fit: BoxFit.cover,
+                            height: 220.h,
+                            width: screenWidth,
+                            placeholder:
+                                (context, url) => const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                            errorWidget:
+                                (context, url, error) => Container(
+                                  height: 220.h,
+                                  color: Colors.grey[200],
+                                  child: const Icon(
+                                    Icons.broken_image,
+                                    size: 56,
+                                  ),
+                                ),
+                          ),
+                ),
+                Positioned(
+                  bottom: 40,
+                  child: Container(
+                    width: screenWidth - 64,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(198, 68, 68, 68),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          recipe.name,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Text("ddaw");
+    }
+  }
 
   Schedule? getNextScheduledEvent(List<Schedule> schedules) {
     if (schedules.isEmpty) return null;
