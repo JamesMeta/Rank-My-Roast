@@ -25,8 +25,8 @@ class SupabaseHelperStorage {
         CroppedFile? croppedFile = await ImageCropper().cropImage(
           sourcePath: pickedFile.path,
           aspectRatio: const CropAspectRatio(
-            ratioX: 1,
-            ratioY: 1,
+            ratioX: 4,
+            ratioY: 3,
           ), // Forces a Square
           compressQuality: 90,
           uiSettings: [
@@ -75,10 +75,7 @@ class SupabaseHelperStorage {
       if (pickedFile != null) {
         CroppedFile? croppedFile = await ImageCropper().cropImage(
           sourcePath: pickedFile.path,
-          aspectRatio: const CropAspectRatio(
-            ratioX: 4,
-            ratioY: 3,
-          ), // Forces a Square
+          aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 3),
           compressQuality: 90,
           uiSettings: [
             AndroidUiSettings(

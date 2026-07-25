@@ -70,6 +70,22 @@ class SqliteHelper {
     return true;
   }
 
+  Future<void> clearGroupOrdersForLegacyGroups(
+    List<Group> currentGroups,
+  ) async {
+    final db = await database;
+
+    // Get all group IDs from the current groups
+    final currentGroupIds = currentGroups.map((group) => group.id).toList();
+
+    // Delete records from groupOrder where the group_id is not in the currentGroupIds
+    await db.delete(
+      'groupOrder',
+      where: 'group_id NOT IN (${currentGroupIds.map((_) => '?').join(', ')})',
+      whereArgs: currentGroupIds,
+    );
+  }
+
   Future<List<GroupOrder>> getGroupOrders() async {
     final db = await database;
     final List<Map<String, dynamic>> mapsRaw = await db.query('groupOrder');
@@ -114,5 +130,10 @@ class SqliteHelper {
       }
     }
     await batch.commit(noResult: true);
+  }
+
+  Future<void> deleteGroupOrder(String groupId) async {
+    final db = await database;
+    await db.delete('groupOrder', where: 'group_id = ?', whereArgs: [groupId]);
   }
 }
