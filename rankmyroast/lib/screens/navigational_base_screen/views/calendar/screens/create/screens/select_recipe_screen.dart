@@ -45,37 +45,41 @@ class _SelectRecipeScreenState extends State<SelectRecipeScreen> {
 
         centerTitle: true,
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          const double idealItemWidth = 140.0;
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            const double idealItemWidth = 140.0;
 
-          int crossAxisCount = (constraints.maxWidth / idealItemWidth).floor();
+            int crossAxisCount =
+                (constraints.maxWidth / idealItemWidth).floor();
 
-          if (crossAxisCount < 2) crossAxisCount = 2;
+            if (crossAxisCount < 2) crossAxisCount = 2;
 
-          return _recipes.isNotEmpty
-              ? GridView.builder(
-                shrinkWrap: true,
+            return _recipes.isNotEmpty
+                ? GridView.builder(
+                  shrinkWrap: true,
 
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  childAspectRatio: 4 / 5,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                ),
-                itemCount: _recipes.length,
-                itemBuilder: (context, index) {
-                  final recipe = _recipes[index];
-                  return GestureDetector(
-                    onTap: () async {
-                      Navigator.pop(context, recipe);
-                    },
-                    child: SelectRecipeTileWidget(recipe: recipe),
-                  );
-                },
-              )
-              : const Center(child: Text('No recipes available.'));
-        },
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: 0.95,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                  ),
+                  itemCount: _recipes.length,
+                  itemBuilder: (context, index) {
+                    final recipe = _recipes[index];
+                    return GestureDetector(
+                      onTap: () async {
+                        Navigator.pop(context, recipe);
+                      },
+                      child: SelectRecipeTileWidget(recipe: recipe),
+                    );
+                  },
+                )
+                : const Center(child: Text('No recipes available.'));
+          },
+        ),
       ),
     );
   }

@@ -278,7 +278,7 @@ class _RecipeViewState extends State<RecipeView> {
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: crossAxisCount,
-                                  childAspectRatio: 4 / 5,
+                                  childAspectRatio: 0.95,
                                   mainAxisSpacing: 16,
                                   crossAxisSpacing: 16,
                                 ),

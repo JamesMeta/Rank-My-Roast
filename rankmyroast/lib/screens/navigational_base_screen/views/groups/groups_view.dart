@@ -76,7 +76,12 @@ class _GroupsViewState extends State<GroupsView> {
               }
 
               if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
+                print("Error fetching groups: ${snapshot.error}");
+
+                return Text(
+                  "Error fetching groups: ${snapshot.error}",
+                  style: TextStyle(color: Colors.red),
+                );
               }
 
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -148,7 +153,11 @@ class _GroupsViewState extends State<GroupsView> {
               }
 
               if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
+                print("Error fetching groups: ${snapshot.error}");
+                return Text(
+                  "Error fetching groups: ${snapshot.error}",
+                  style: TextStyle(color: Colors.red),
+                );
               }
 
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -251,6 +260,8 @@ class _GroupsViewState extends State<GroupsView> {
     }
 
     final sqliteHelper = SqliteHelper();
+    await sqliteHelper.clearGroupOrdersForLegacyGroups(groups);
+
     final groupOrders = await sqliteHelper.getGroupOrders();
 
     late final List<Group> newGroups;
