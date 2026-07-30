@@ -14,22 +14,19 @@ class RecipeReorderableListTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Row(
-        children: [
-          Expanded(flex: 1, child: Icon(Icons.drag_handle)),
-          Expanded(
-            flex: 9,
-            child: RecipeListTileWidget(
-              recipe: recipe,
-              userRanking: ranking,
-              groupRanking: ranking,
-              isEdit: true,
-            ),
+    return Row(
+      children: [
+        Expanded(flex: 1, child: Icon(Icons.drag_handle)),
+        Expanded(
+          flex: 9,
+          child: RecipeListTileWidget(
+            recipe: recipe,
+            userRanking: ranking,
+            groupRanking: ranking,
+            isEdit: true,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

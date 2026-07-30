@@ -10,7 +10,7 @@ class Group {
   final bool useRating;
   final bool isPersonalGroup;
   final List<GroupMember> groupMembers;
-  final List<Recipe> recipes;
+  List<Recipe> recipes;
 
   Group({
     required this.id,

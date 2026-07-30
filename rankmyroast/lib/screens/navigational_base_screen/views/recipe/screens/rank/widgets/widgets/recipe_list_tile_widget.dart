@@ -181,6 +181,13 @@ class RecipeListTileWidget extends StatelessWidget {
                                       ),
                                     ),
                                   ],
+
+                                  if (isEdit && userRanking == "N/A") ...[
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      child: Text("Skip"),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
