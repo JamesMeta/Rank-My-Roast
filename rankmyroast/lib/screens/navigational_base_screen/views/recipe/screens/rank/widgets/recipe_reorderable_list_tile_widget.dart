@@ -5,11 +5,13 @@ import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screen
 class RecipeReorderableListTileWidget extends StatelessWidget {
   final Recipe recipe;
   final String ranking;
+  final void Function(Recipe recipe) removeValueFromList;
 
   const RecipeReorderableListTileWidget({
     super.key,
     required this.recipe,
     required this.ranking,
+    required this.removeValueFromList,
   });
 
   @override
@@ -24,6 +26,7 @@ class RecipeReorderableListTileWidget extends StatelessWidget {
             userRanking: ranking,
             groupRanking: ranking,
             isEdit: true,
+            removeValueFromList: removeValueFromList,
           ),
         ),
       ],
