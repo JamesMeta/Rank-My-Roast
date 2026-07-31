@@ -1,3 +1,4 @@
+import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/responses/create_group_response.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/group_member.dart';
@@ -69,9 +70,23 @@ class SupabaseHelperGroups {
         // Not sure if this is the best way to do this,
         // in theory it should work because RLS should only return groups the user is a member of
         final response = await _client.from("full_group_details").select();
+        final recipeResponse = await _client
+            .from("recipe")
+            .select('*')
+            .eq("user_id", authId);
 
         final List<Group> groups =
             (response as List).map((data) => Group.fromMap(data)).toList();
+
+        // Because there is no way for a user to view a recipe without a group
+        // We will just add every recipe a user has created to personal group so they can't get lost
+        final Group? personalGroup =
+            groups.where((test) => test.isPersonalGroup).toList().firstOrNull;
+
+        if (personalGroup != null) {
+          personalGroup.recipes =
+              recipeResponse.map((data) => Recipe.fromMap(data)).toList();
+        }
 
         return groups;
       } on Exception catch (e) {
@@ -293,7 +308,8 @@ class SupabaseHelperGroups {
             .from("group")
             .delete()
             .eq("id", groupId)
-            .eq("user_id", authId);
+            .eq("user_id", authId)
+            .neq("is_personal_group", true);
 
         final confirmDelete =
             await _client

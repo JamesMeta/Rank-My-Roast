@@ -5,31 +5,31 @@ import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screen
 class RecipeReorderableListTileWidget extends StatelessWidget {
   final Recipe recipe;
   final String ranking;
+  final void Function(Recipe recipe) removeValueFromList;
 
   const RecipeReorderableListTileWidget({
     super.key,
     required this.recipe,
     required this.ranking,
+    required this.removeValueFromList,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Row(
-        children: [
-          Expanded(flex: 1, child: Icon(Icons.drag_handle)),
-          Expanded(
-            flex: 9,
-            child: RecipeListTileWidget(
-              recipe: recipe,
-              userRanking: ranking,
-              groupRanking: ranking,
-              isEdit: true,
-            ),
+    return Row(
+      children: [
+        Expanded(flex: 1, child: Icon(Icons.drag_handle)),
+        Expanded(
+          flex: 9,
+          child: RecipeListTileWidget(
+            recipe: recipe,
+            userRanking: ranking,
+            groupRanking: ranking,
+            isEdit: true,
+            removeValueFromList: removeValueFromList,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

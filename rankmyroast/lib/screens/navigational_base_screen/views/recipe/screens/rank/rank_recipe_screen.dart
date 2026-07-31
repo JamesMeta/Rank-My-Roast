@@ -1,3 +1,7 @@
+//
+// My apologies to my future self the ranking system is a complete mess
+//
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -28,6 +32,7 @@ class RankRecipeScreen extends StatefulWidget {
 
 class _RankRecipeScreenState extends State<RankRecipeScreen> {
   late final Future<List<RecipeGroupUserRanking>> _recipeGroupUserRankingList;
+  final List<RecipeGroupUserRanking> _poppedGroupUserRanking = [];
   List<RecipeRating>? _ratings;
   Group? _group;
   Recipe? _recipeToRank;
@@ -133,7 +138,26 @@ class _RankRecipeScreenState extends State<RankRecipeScreen> {
                     final List<RecipeGroupUserRanking>
                     recipeGroupUserRankingList = snapshot.data!;
 
+                    removeValueFromList(Recipe recipe) {
+                      final recipeRating = recipeGroupUserRankingList
+                          .singleWhere(
+                            (recipeRating) =>
+                                recipeRating.recipe.id == recipe.id,
+                          );
+
+                      setState(() {
+                        recipeGroupUserRankingList.remove(recipeRating);
+                      });
+                      _poppedGroupUserRanking.add(recipeRating);
+                    }
+
                     if (!_reordering) {
+                      if (_poppedGroupUserRanking.isNotEmpty) {
+                        recipeGroupUserRankingList.addAll(
+                          _poppedGroupUserRanking,
+                        );
+                        _poppedGroupUserRanking.clear();
+                      }
                       if (_viewGroupRankings) {
                         recipeGroupUserRankingList.sort((a, b) {
                           final rankingA = a.groupRank;
@@ -185,6 +209,7 @@ class _RankRecipeScreenState extends State<RankRecipeScreen> {
                                     recipe: recipe,
                                     userRanking: userRankedPlace,
                                     groupRanking: groupRankedPlace,
+                                    removeValueFromList: removeValueFromList,
                                   );
                                 },
                               ),
@@ -214,6 +239,7 @@ class _RankRecipeScreenState extends State<RankRecipeScreen> {
                                     child: RecipeReorderableListTileWidget(
                                       recipe: recipe,
                                       ranking: index.toString(),
+                                      removeValueFromList: removeValueFromList,
                                     ),
                                   );
                                 },
@@ -253,6 +279,7 @@ class _RankRecipeScreenState extends State<RankRecipeScreen> {
                                     groupRanking: groupRankedPlace,
                                     userRanking: userRankedPlace,
                                     isGroupRatingTile: true,
+                                    removeValueFromList: removeValueFromList,
                                   );
                                 },
                               ),
