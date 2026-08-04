@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,7 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 const serverClientId =
     "474584121880-5f7qh4hd4eonbpirt35mnddrlmahma9n.apps.googleusercontent.com";
 
-class SignInWithGoogle {
+class SignInWithGoogle with SnackbarService {
   static Future<void> handleSignInWithGoogle(BuildContext context) async {
     try {
       final signInResponse = await signInWithGoogle();
@@ -17,23 +18,17 @@ class SignInWithGoogle {
           await SupabaseHelper.groups.createPersonalGroup();
           if (context.mounted) context.go('/base');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                'Error: Unable to sign in with Google at this time',
-              ),
-              behavior: SnackBarBehavior.floating, // Recommended for modern UI
-            ),
+          SnackbarService.showSnackbarStatic(
+            context,
+            'Sign in failed. Please try again.',
           );
         }
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString().split("code: ").last}'),
-            behavior: SnackBarBehavior.floating, // Recommended for modern UI
-          ),
+        SnackbarService.showSnackbarStatic(
+          context,
+          'Error: ${e.toString().split("code: ").last}',
         );
       }
     }

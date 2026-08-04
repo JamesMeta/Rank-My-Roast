@@ -27,7 +27,7 @@ class SupabaseHelperGroups {
             await _client
                 .from("group")
                 .insert({
-                  "name": "Personal Group",
+                  "name": "Uncategorized Recipes",
                   "grade_visible": false,
                   "use_rating": false,
                   "is_personal_group": true,

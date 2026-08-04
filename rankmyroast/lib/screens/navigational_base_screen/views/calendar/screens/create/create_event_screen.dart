@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/extra/create_event_extra.dart';
 import 'package:rankmyroast/classes/extra/select_recipe_extra.dart';
+import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
@@ -20,7 +21,8 @@ class CreateEventScreen extends StatefulWidget {
   State<CreateEventScreen> createState() => _CreateEventScreenState();
 }
 
-class _CreateEventScreenState extends State<CreateEventScreen> {
+class _CreateEventScreenState extends State<CreateEventScreen>
+    with SnackbarService {
   late final String _labelText;
   late final Schedule? _eventToEdit;
 
@@ -107,19 +109,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   ); // Assuming id is non-nullable
 
                   if (success == true) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Event deleted successfully!'),
-                      ),
-                    );
+                    showSuccessSnackbar(context, 'Event deleted successfully!');
                     context.pop(true);
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Failed to delete event. Please try again.',
-                        ),
-                      ),
+                    showSnackbar(
+                      context,
+                      'Failed to delete event. Please try again.',
                     );
                   }
                 }
@@ -493,9 +488,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     if (_selectedGroup == null ||
         _selectedRecipe == null ||
         _selectedDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select a group, recipe, and date.')),
-      );
+      showSnackbar(context, 'Please select a group, recipe, and date.');
       return false;
     }
 
@@ -525,13 +518,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     }
 
     if (success == true) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Event saved successfully!')));
+      showSuccessSnackbar(context, 'Event saved successfully!');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save event. Please try again.')),
-      );
+      showSnackbar(context, 'Failed to save event. Please try again.');
     }
     return success == true;
   }

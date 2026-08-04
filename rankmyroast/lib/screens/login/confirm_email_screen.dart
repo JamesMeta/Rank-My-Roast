@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/mixin/Snackbar_service.dart';
 import 'package:rankmyroast/screens/login/classes/clipped_container.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,7 +17,8 @@ class ConfirmEmailScreen extends StatefulWidget {
   State<ConfirmEmailScreen> createState() => _ConfirmEmailScreenState();
 }
 
-class _ConfirmEmailScreenState extends State<ConfirmEmailScreen> {
+class _ConfirmEmailScreenState extends State<ConfirmEmailScreen>
+    with SnackbarService {
   late final String email;
   late final String password;
   final TextEditingController _codeController = TextEditingController();
@@ -239,17 +241,13 @@ class _ConfirmEmailScreenState extends State<ConfirmEmailScreen> {
 
     if (code.isEmpty) {
       _resetLoadingState();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter the verification code.')),
-      );
+      showSnackbar(context, 'Please enter the verification code.');
       return;
     }
 
     if (code.length != 8) {
       _resetLoadingState();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid 8-digit code.')),
-      );
+      showSnackbar(context, 'Please enter a valid 8-digit code.');
       return;
     }
 
@@ -267,26 +265,16 @@ class _ConfirmEmailScreenState extends State<ConfirmEmailScreen> {
           if (mounted) context.go('/base');
         } else {
           _resetLoadingState();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Email confirmation failed. Please try again.'),
-            ),
-          );
+          showSnackbar(context, 'Email confirmation failed. Please try again.');
         }
       }
     } catch (e) {
       if (mounted) {
         _resetLoadingState();
         if (e.toString().toLowerCase().contains('otp_expired')) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Verification code has expired or is invalid.'),
-            ),
-          );
+          showSnackbar(context, 'Verification code has expired or is invalid.');
         } else {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Error confirming email: $e')));
+          showSnackbar(context, 'Error confirming email: $e');
         }
       }
     }
@@ -308,18 +296,14 @@ class _ConfirmEmailScreenState extends State<ConfirmEmailScreen> {
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Verification code resent. Please check your email.'),
-            duration: Duration(seconds: 2),
-          ),
+        showSuccessSnackbar(
+          context,
+          'Verification code resent. Please check your email.',
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error resending code: ${e.toString()}')),
-        );
+        showSnackbar(context, 'Error resending code: ${e.toString()}');
       }
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
@@ -21,7 +22,8 @@ class RatingDialogWidget extends StatefulWidget {
   State<RatingDialogWidget> createState() => _RatingDialogWidgetState();
 }
 
-class _RatingDialogWidgetState extends State<RatingDialogWidget> {
+class _RatingDialogWidgetState extends State<RatingDialogWidget>
+    with SnackbarService {
   final TextEditingController _ratingController = TextEditingController();
   late final Recipe _recipe;
   late final Group? _group;
@@ -145,12 +147,9 @@ class _RatingDialogWidgetState extends State<RatingDialogWidget> {
             final ratingValue = int.tryParse(input);
 
             if (ratingValue == null || ratingValue < 1 || ratingValue > 10) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    "Please enter a valid rating between 1 and 10.",
-                  ),
-                ),
+              showSnackbar(
+                context,
+                "Please enter a valid rating between 1 and 10.",
               );
 
               setState(() {
@@ -172,15 +171,12 @@ class _RatingDialogWidgetState extends State<RatingDialogWidget> {
             if (!context.mounted) return;
 
             if (response == true) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Rating submitted successfully!")),
-              );
+              showSuccessSnackbar(context, "Rating submitted successfully!");
               context.pop();
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Failed to submit rating. Please try again."),
-                ),
+              showSnackbar(
+                context,
+                "Failed to submit rating. Please try again.",
               );
             }
           },

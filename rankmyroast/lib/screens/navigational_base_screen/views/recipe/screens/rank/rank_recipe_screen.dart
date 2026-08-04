@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/modals/recipe_rating.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
@@ -30,7 +31,8 @@ class RankRecipeScreen extends StatefulWidget {
   State<RankRecipeScreen> createState() => _RankRecipeScreenState();
 }
 
-class _RankRecipeScreenState extends State<RankRecipeScreen> {
+class _RankRecipeScreenState extends State<RankRecipeScreen>
+    with SnackbarService {
   late final Future<List<RecipeGroupUserRanking>> _recipeGroupUserRankingList;
   final List<RecipeGroupUserRanking> _poppedGroupUserRanking = [];
   List<RecipeRating>? _ratings;
@@ -494,14 +496,10 @@ class _RankRecipeScreenState extends State<RankRecipeScreen> {
     );
 
     if (response != true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update rankings. Please try again.')),
-      );
+      showSnackbar(context, 'Failed to update rankings. Please try again.');
       return false;
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Rankings updated successfully')));
+      showSuccessSnackbar(context, 'Rankings updated successfully');
     }
 
     return true;
