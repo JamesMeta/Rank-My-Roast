@@ -508,7 +508,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen>
       name: _groupNameController.text,
       gradeVisible: _showRatings,
       useRating: _isUsingRating,
-      isPersonalGroup: false,
+      isPersonalGroup: widget.groupToEdit!.isPersonalGroup,
       userId: SupabaseHelper.users.getAuthId()!,
       groupMembers: _users,
       recipes: [],

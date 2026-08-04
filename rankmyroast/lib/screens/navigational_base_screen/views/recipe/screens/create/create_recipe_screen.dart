@@ -39,6 +39,8 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
 
   late final String _labelText;
 
+  late final List<Group> _groups;
+
   File? _recipeImageFile;
 
   bool _isPublic = false;
@@ -95,6 +97,9 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
       _recipeToEditImageUrl = null;
       _recipeToEdit = null;
     }
+
+    _groups =
+        widget.groups.where((group) => group.isPersonalGroup == false).toList();
 
     super.initState();
   }
@@ -413,7 +418,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
                             }),
                         controller: _groupsController,
                         itemsList: _selectedGroups,
-                        groups: widget.groups,
+                        groups: _groups,
                         setParentState: setState,
                         deleteFromParent:
                             (item) => _selectedGroups.removeWhere(
