@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/screens/login/classes/clipped_container.dart';
 import 'package:rankmyroast/screens/login/classes/login_screen_theme.dart';
 import 'package:rankmyroast/screens/login/classes/sign_in_with_google.dart';
@@ -16,7 +17,8 @@ class CreateAccountScreen extends StatefulWidget {
   State<CreateAccountScreen> createState() => _CreateAccountScreenState();
 }
 
-class _CreateAccountScreenState extends State<CreateAccountScreen> {
+class _CreateAccountScreenState extends State<CreateAccountScreen>
+    with SnackbarService {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
@@ -327,46 +329,25 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     final confirmPassword = _confirmPasswordController.text;
 
     if (password.length < 8) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Error: Password must be at least 8 characters'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showSnackbar(context, 'Error: Password must be at least 8 characters');
       return;
     }
 
     if (!password.contains(RegExp(r'[A-Z]'))) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            'Error: Password must contain at least one uppercase letter',
-          ),
-          behavior: SnackBarBehavior.floating,
-        ),
+      showSnackbar(
+        context,
+        'Error: Password must contain at least one uppercase letter',
       );
       return;
     }
 
     if (!password.contains(RegExp(r'[0-9]'))) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            'Error: Password must contain at least one number',
-          ),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showSnackbar(context, 'Error: Password must contain at least one number');
       return;
     }
 
     if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Error: Passwords do not match'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showSnackbar(context, 'Error: Passwords do not match');
       return;
     }
 
@@ -383,14 +364,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             extra: [email, password],
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                'Error: Unable to create account at this time',
-              ),
-              behavior: SnackBarBehavior.floating, // Recommended for modern UI
-            ),
-          );
+          showSnackbar(context, 'Error: Unable to create account at this time');
         }
       }
     } catch (e) {
@@ -404,22 +378,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         }
 
         if (e.toString().toLowerCase().contains("user already registered")) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                'Error: An account with this email already exists',
-              ),
-              behavior: SnackBarBehavior.floating, // Recommended for modern UI
-            ),
+          showSnackbar(
+            context,
+            'Error: An account with this email already exists',
           );
           return;
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error creating account: ${e.toString()}'),
-              behavior: SnackBarBehavior.floating, // Recommended for modern UI
-            ),
-          );
+          showSnackbar(context, 'Error creating account: ${e.toString()}');
         }
       }
     }

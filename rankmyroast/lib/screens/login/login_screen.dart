@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/screens/login/classes/clipped_container.dart';
 import 'package:rankmyroast/screens/login/classes/login_screen_theme.dart';
 import 'package:rankmyroast/screens/login/classes/sign_in_with_google.dart';
@@ -16,7 +17,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with SnackbarService {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -310,13 +311,9 @@ class _LoginScreenState extends State<LoginScreen> {
         if (response.user?.role == "authenticated") {
           context.go('/base');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                'Error: Unable to sign in with provided credentials',
-              ),
-              behavior: SnackBarBehavior.floating, // Recommended for modern UI
-            ),
+          showSnackbar(
+            context,
+            'Error: Unable to sign in with provided credentials',
           );
         }
       }
@@ -331,20 +328,10 @@ class _LoginScreenState extends State<LoginScreen> {
         }
 
         if (e.toString().toLowerCase().contains("invalid login credentials")) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Error: Invalid email or password'),
-              behavior: SnackBarBehavior.floating, // Recommended for modern UI
-            ),
-          );
+          showSnackbar(context, 'Error: Invalid email or password');
           return;
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              behavior: SnackBarBehavior.floating, // Recommended for modern UI
-            ),
-          );
+          showSnackbar(context, 'Error: $e');
         }
       }
     }

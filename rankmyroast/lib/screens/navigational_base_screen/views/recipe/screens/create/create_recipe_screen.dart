@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/common_widgets/take_photo_bottom_modal_widget.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
@@ -30,7 +31,8 @@ class CreateRecipeScreen extends StatefulWidget {
   State<CreateRecipeScreen> createState() => _CreateRecipeScreenState();
 }
 
-class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
+class _CreateRecipeScreenState extends State<CreateRecipeScreen>
+    with SnackbarService {
   late final bool _isEditing;
   late final Recipe? _recipeToEdit;
   late final String? _recipeToEditImageUrl;
@@ -496,9 +498,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
     final int? cookTime = int.tryParse(_cookTimeController.text);
 
     if (_recipeNameController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Recipe name cannot be empty")));
+      showSnackbar(context, "Recipe name cannot be empty");
       return false;
     }
 
@@ -506,10 +506,9 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
             _prepTimeController.text.isNotEmpty &&
             _includeTimeEstimations ||
         prepTime != null && prepTime < 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Preparation time must be a valid non negative number"),
-        ),
+      showSnackbar(
+        context,
+        "Preparation time must be a valid non negative number",
       );
       return false;
     }
@@ -518,11 +517,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
             _cookTimeController.text.isNotEmpty &&
             _includeTimeEstimations ||
         cookTime != null && cookTime < 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Cook time must be a valid non negative number"),
-        ),
-      );
+      showSnackbar(context, "Cook time must be a valid non negative number");
       return false;
     }
 
@@ -547,23 +542,17 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
 
       if (failedGroups != null) {
         if (failedGroups.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to add recipe to groups.")),
-          );
+          showSnackbar(context, "Failed to add recipe to groups.");
         }
       }
 
       if (failedImage != null) {
         if (failedImage) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to upload image for recipe")),
-          );
+          showSnackbar(context, "Failed to upload image for recipe");
         }
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Recipe Created Successfully")));
+      showSuccessSnackbar(context, "Recipe Created Successfully");
       return true;
     } else if (!response.success && mounted) {
       final localError = response.localError;
@@ -590,9 +579,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
     final int? cookTime = int.tryParse(_cookTimeController.text);
 
     if (_recipeNameController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Recipe name cannot be empty")));
+      showSnackbar(context, "Recipe name cannot be empty");
       return false;
     }
 
@@ -600,10 +587,9 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
             _prepTimeController.text.isNotEmpty &&
             _includeTimeEstimations ||
         prepTime != null && prepTime < 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Preparation time must be a valid non negative number"),
-        ),
+      showSnackbar(
+        context,
+        "Preparation time must be a valid non negative number",
       );
       return false;
     }
@@ -612,11 +598,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
             _cookTimeController.text.isNotEmpty &&
             _includeTimeEstimations ||
         cookTime != null && cookTime < 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Cook time must be a valid non negative number"),
-        ),
-      );
+      showSnackbar(context, "Cook time must be a valid non negative number");
       return false;
     }
 
@@ -651,23 +633,17 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
 
       if (failedGroups != null) {
         if (failedGroups.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to add recipe to groups.")),
-          );
+          showSnackbar(context, "Failed to add recipe to groups.");
         }
       }
 
       if (failedImage != null) {
         if (failedImage) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to upload image for recipe")),
-          );
+          showSnackbar(context, "Failed to upload image for recipe");
         }
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Recipe Updated Successfully")));
+      showSuccessSnackbar(context, "Recipe Updated Successfully");
       return true;
     } else if (!response.success && mounted) {
       final localError = response.localError;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/group_member.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/groups/screens/widgets/delete_group_confirmation_dialog.dart';
@@ -17,7 +18,8 @@ class CreateGroupScreen extends StatefulWidget {
   State<CreateGroupScreen> createState() => _CreateGroupScreenState();
 }
 
-class _CreateGroupScreenState extends State<CreateGroupScreen> {
+class _CreateGroupScreenState extends State<CreateGroupScreen>
+    with SnackbarService {
   final TextEditingController _groupNameController = TextEditingController();
   final TextEditingController _userNameController = TextEditingController();
 
@@ -491,18 +493,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   Future<bool?> _updateGroup() async {
     if (_groupNameController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Group name cannot be empty")));
+      showSnackbar(context, "Group name cannot be empty");
       return false;
     }
 
     if (_groupNameController.text.length > 20) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Group name cannot be longer than 20 characters"),
-        ),
-      );
+      showSnackbar(context, "Group name cannot be longer than 20 characters");
       return false;
     }
 
@@ -525,37 +521,29 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
       if (failedMembers != null) {
         for (var failedMember in failedMembers) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Failed to update ${failedMember.username}"),
-            ),
-          );
+          showSnackbar(context, "Failed to update ${failedMember.username}");
         }
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Group '${_groupNameController.text}' Updated!"),
-        ),
+      showSuccessSnackbar(
+        context,
+        "Group '${_groupNameController.text}' Updated!",
       );
 
       if (response.failedToAddMembers != null) {
         final failedMembers = response.failedToAddMembers!;
         if (failedMembers.isNotEmpty) {
           for (var failedMember in failedMembers) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Failed to add ${failedMember.username}")),
-            );
+            showSnackbar(context, "Failed to add ${failedMember.username}");
           }
         }
       }
       return true;
     } else {
       if (mounted && response.localError != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.errorMessage ?? "Failed to update group"),
-          ),
+        showSnackbar(
+          context,
+          response.errorMessage ?? "Failed to update group",
         );
       }
       return false;
@@ -564,18 +552,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   Future<bool?> _createGroup() async {
     if (_groupNameController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Group name cannot be empty")));
+      showSnackbar(context, "Group name cannot be empty");
       return false;
     }
 
     if (_groupNameController.text.length > 20) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Group name cannot be longer than 20 characters"),
-        ),
-      );
+      showSnackbar(context, "Group name cannot be longer than 20 characters");
       return false;
     }
 
@@ -594,9 +576,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     final ownerUsername = await SupabaseHelper.users.getUsername();
 
     if (ownerUsername == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to create group, try again later")),
-      );
+      if (mounted) {
+        showSnackbar(context, "Failed to create group, try again later");
+      }
+
       return false;
     }
 
@@ -613,35 +596,29 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
       if (failedMembers != null) {
         for (var failedMember in failedMembers) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to add ${failedMember.username}")),
-          );
+          showSnackbar(context, "Failed to add ${failedMember.username}");
         }
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Group '${_groupNameController.text}' created!"),
-        ),
+      showSuccessSnackbar(
+        context,
+        "Group '${_groupNameController.text}' created!",
       );
 
       if (response.failedToAddMembers != null) {
         final failedMembers = response.failedToAddMembers!;
         if (failedMembers.isNotEmpty) {
           for (var failedMember in failedMembers) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Failed to add ${failedMember.username}")),
-            );
+            showSnackbar(context, "Failed to add ${failedMember.username}");
           }
         }
       }
       return true;
     } else {
       if (mounted && response.localError != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.errorMessage ?? "Failed to create group"),
-          ),
+        showSnackbar(
+          context,
+          response.errorMessage ?? "Failed to create group",
         );
       }
       return false;
@@ -663,15 +640,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     );
 
     if (response && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Group '${widget.groupToEdit!.name}' deleted!")),
+      showSuccessSnackbar(
+        context,
+        "Group '${widget.groupToEdit!.name}' deleted!",
       );
       return true;
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Failed to delete group")));
+        showErrorSnackbar(context, "Failed to delete group");
       }
       return false;
     }
@@ -681,19 +657,18 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     // Check if user is owner of the group, if so, ask them to delete the group instead
     final currentUserId = SupabaseHelper.users.getAuthId();
     if (currentUserId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to leave group, try again later")),
-      );
+      if (mounted) {
+        showSnackbar(context, "Failed to leave group, try again later");
+      }
       return false;
     }
     if (currentUserId == widget.groupToEdit!.userId) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "You are the owner of this group, please delete the group instead if you want to leave",
-          ),
-        ),
-      );
+      if (mounted) {
+        showErrorSnackbar(
+          context,
+          "You are the owner of this group. Please delete the group instead.",
+        );
+      }
       return false;
     }
 
@@ -730,15 +705,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     );
 
     if (response == true && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("You have left '${widget.groupToEdit!.name}'!")),
+      showSuccessSnackbar(
+        context,
+        "You have left '${widget.groupToEdit!.name}'!",
       );
       return true;
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Failed to leave group")));
+        showSnackbar(context, "Failed to leave group");
       }
       return false;
     }
