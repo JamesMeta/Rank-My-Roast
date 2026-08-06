@@ -7,6 +7,7 @@ import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/common_widgets/take_photo_bottom_modal_widget.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
+import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/create/widgets/confirm_delete_recipe_dialog.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/create/widgets/time_section_widget.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/create/widgets/form_section_widget.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/create/widgets/group_form_section_widget.dart';
@@ -175,7 +176,25 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
         actions: [
           if (widget.recipeToEdit != null)
             IconButton(
-              onPressed: () async {},
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => ConfirmDeleteRecipeDialog(),
+                );
+
+                if (confirm != true) return;
+
+                final response = await SupabaseHelper.recipe.deleteRecipe(
+                  widget.recipeToEdit!.id,
+                );
+
+                if (response == true && context.mounted) {
+                  showSuccessSnackbar(context, "Recipe Deleted Successfully");
+                  context.pop(true);
+                } else if (response == false && context.mounted) {
+                  showSnackbar(context, "Failed to delete recipe");
+                }
+              },
               icon: Icon(Icons.delete, color: Colors.white),
             ),
           PopupMenuButton<String>(

@@ -490,4 +490,14 @@ class SupabaseHelperRecipe {
       return null;
     }
   }
+
+  Future<bool?> deleteRecipe(String recipeId) async {
+    try {
+      await _client.from("recipe").delete().eq("id", recipeId);
+      return true;
+    } catch (e) {
+      print('Error deleting recipe: $e');
+      return false;
+    }
+  }
 }
