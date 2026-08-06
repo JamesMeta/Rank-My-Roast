@@ -288,7 +288,14 @@ class SupabaseHelperGroups {
           failedToAddMembers: failedToAddMembers,
         );
       } on Exception catch (e) {
-        print(e);
+        if (e.toString().contains("PGRST116")) {
+          return CreateGroupResponse(
+            success: false,
+            localError: true,
+            errorMessage: "Insufficient permissions to update group.",
+          );
+        }
+
         return CreateGroupResponse(
           success: false,
           localError: true,
